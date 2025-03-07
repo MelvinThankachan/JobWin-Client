@@ -1,10 +1,10 @@
-import LoginForm from "@/components/login-form";
+import SignupForm from "@/components/signup-form";
 import { Button } from "@/components/ui/button";
 import { H2, Muted, P } from "@/components/ui/typography";
 import Image from "next/image";
 import Link from "next/link";
 
-const Login = () => {
+const Signup = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-xl flex flex-col items-center gap-10">
@@ -16,19 +16,19 @@ const Login = () => {
             width={25}
             height={25}
           />{" "}
-          Login with Google
+          Signup with Google
         </Button>
         <div className="w-full flex items-center justify-center gap-5">
           <div className="flex-grow border-t border-border" />
           <Muted className="text-base">Or sign up with email</Muted>
           <div className="flex-grow border-t border-border" />
         </div>
-        <LoginForm />
+        <SignupForm />
         <div className="flex items-center justify-start w-full">
-          <P>Don't have an account?</P>
-          <Link href="/auth/signup">
+          <P>Already have an account?</P>
+          <Link href="/auth/login">
             <Button variant="link" className="">
-              Sign Up
+              Log In
             </Button>
           </Link>
         </div>
@@ -37,4 +37,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

@@ -1,5 +1,5 @@
-import JobWinLogo from "@/components/JobWinLogo";
-import NavBar from "@/components/NavBar";
+import JobWinLogo from "@/components/job-win-logo";
+import NavBar from "@/components/nav-bar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

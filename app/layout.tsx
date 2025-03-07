@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { epilogue, clashDisplay, jetBrainsMono } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { DarkModeToggle } from "@/components/dark-mode-toggle";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "JobWin",
@@ -20,17 +21,13 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${epilogue.variable} ${jetBrainsMono.variable}`}
     >
-      <body className="antialiased flex flex-col gap-5 min-h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body className="antialiased flex flex-col gap-5 min-h-screen px-5">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="absolute right-4 top-4">
             <DarkModeToggle />
           </div>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

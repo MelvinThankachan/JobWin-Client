@@ -1,4 +1,4 @@
-import JobWinLogo from "./JobWinLogo";
+import JobWinLogo from "./job-win-logo";
 
 const NavBar = () => {
   return (
