@@ -56,12 +56,12 @@ const JobWinLogo: React.FC<JobWinLogoProps> = ({
 }) => {
   return (
     <div className={cn("flex items-center justify-center gap-2", className)}>
-      {showText && (
+      {showIcon && (
         <div className="w-12 h-12">
           <LogoIcon />
         </div>
       )}
-      {showIcon && (
+      {showText && (
         <span className="text-accent-foreground text-4xl font-bold">
           JobWin
         </span>

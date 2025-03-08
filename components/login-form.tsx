@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,15 +15,39 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "./ui/password-input";
 import { MultilineCode } from "./ui/typography";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 const formSchema = z.object({
-  email: z.string(),
-  password: z.string(),
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Please enter a valid email address." }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: "Password must contain at least one number",
+    })
+    .refine((password) => /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password), {
+      message: "Password must contain at least one special character",
+    }),
+  role: z.enum(["candidate", "employer"]),
 });
 
 export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      role: "candidate",
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -47,6 +70,7 @@ export default function LoginForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
+        noValidate
         className="w-full flex flex-col gap-10"
       >
         <FormField
@@ -62,7 +86,6 @@ export default function LoginForm() {
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -77,7 +100,39 @@ export default function LoginForm() {
               <FormControl>
                 <PasswordInput placeholder="Enter your password." {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Login as</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue="candidate"
+                  className="flex"
+                >
+                  {[
+                    ["Candidate", "candidate"],
+                    ["Employer", "employer"],
+                  ].map((option, index) => (
+                    <FormItem
+                      className="flex items-center justify-center"
+                      key={index}
+                    >
+                      <FormControl>
+                        <RadioGroupItem value={option[1]} />
+                      </FormControl>
+                      <FormLabel className="font-base">{option[0]}</FormLabel>
+                    </FormItem>
+                  ))}
+                </RadioGroup>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
