@@ -21,7 +21,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${epilogue.variable} ${jetBrainsMono.variable}`}
     >
-      <body className="antialiased flex flex-col gap-5 min-h-screen">
+      <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="absolute right-4 top-4 z-[100]">
             <DarkModeToggle />

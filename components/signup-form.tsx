@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { MultilineCode } from "./ui/typography";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import axiosInstance from "@/lib/axiosInstance";
+import { setUser } from "@/lib/set-user";
 
 const formSchema = z
   .object({
@@ -62,19 +64,51 @@ export default function SignupForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const data = {
+      email: values.email,
+      password: values.password_1,
+      role: values.role,
+    };
+
     try {
-      console.log(values);
-      toast(<MultilineCode>{JSON.stringify(values, null, 2)}</MultilineCode>, {
-        description: "Your form data has been submitted successfully.",
-        action: {
-          label: "Dismiss",
-          onClick: () => toast.dismiss(),
-        },
-      });
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      const response = await axiosInstance.post("/auth/signup/", data);
+      if (response.status === 201) {
+        const { refresh, access, user } = response.data;
+        setUser(refresh, access, user);
+        if (user.role === "candidate") {
+          window.location.href = "/candidate/dashboard";
+        } else if (user.role === "employer") {
+          window.location.href = "/employer/dashboard";
+        }
+      }
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        const backendErrors = error.response.data;
+
+        if (backendErrors.email) {
+          form.setError("email", {
+            type: "server",
+            message: backendErrors.email[0],
+          });
+        }
+        if (backendErrors.password) {
+          form.setError("password_1", {
+            type: "server",
+            message: backendErrors.password[0],
+          });
+        }
+        if (backendErrors.role) {
+          form.setError("role", {
+            type: "server",
+            message: backendErrors.role[0],
+          });
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.", {
+          description: `${error.response.status}`,
+        });
+      }
     }
   }
 
