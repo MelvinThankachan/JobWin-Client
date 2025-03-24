@@ -1,0 +1,15 @@
+import { dummyCandidateData } from "@/data/dummy-table-data";
+import CandidateTable from "./candidate-table";
+
+const WinAdminCandidates = () => {
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+        <div className="text-5xl">Candidates List</div>
+        <CandidateTable data={dummyCandidateData} />
+      </div>
+    </div>
+  );
+};
+
+export default WinAdminCandidates;
