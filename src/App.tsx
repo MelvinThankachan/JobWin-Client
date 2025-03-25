@@ -4,17 +4,19 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { H1 } from "./components/ui/typography";
-import Error404 from "./components/error-404";
-import LoginPage from "./pages/public/login-page";
 import WinAdminDashboard from "./components/winadmin/dashboard";
 import WinAdminCandidates from "./components/winadmin/candidates";
 import WinAdminEmployers from "./components/winadmin/employers";
 import WinAdminLayout from "./components/winadmin/layout";
-import SignupPage from "./pages/public/signup-page";
 import { ThemeProvider } from "@/components/theme-provider";
 import DarkModeToggle from "./components/dark-mode-toggle";
+import Error404Page from "./pages/public/error-404-page";
+import AuthPageLayout from "./pages/auth/auth-page-layout";
+import LoginPage from "./pages/auth/login-page";
+import SignupPage from "./pages/auth/signup-page";
 
 const router = createBrowserRouter([
+  // Public Pages
   {
     path: "/",
     element: (
@@ -22,15 +24,27 @@ const router = createBrowserRouter([
         <H1>JobWin!</H1>
       </div>
     ),
-    errorElement: <Error404 />,
+    errorElement: <Error404Page />,
   },
+
+  // Auth Pages
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />,
+    path: "/auth",
+    element: <AuthPageLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/auth/login" replace />,
+      },
+      {
+        path: "/auth/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/auth/signup",
+        element: <SignupPage />,
+      },
+    ],
   },
 
   // {
@@ -38,10 +52,11 @@ const router = createBrowserRouter([
   //   element: <FindJobsPage />,
   // },
   // {
-  //   path: "/find-conpanies",
+  //   path: "/find-companies",
   //   element: <FindCompaniesPage />,
   // },
 
+  // WinAdmin Pages
   {
     path: "/winadmin",
     element: <WinAdminLayout />,
@@ -70,7 +85,7 @@ const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <main>
-        <div className="fixed right-5 top-5 z-10">
+        <div className="fixed right-5 bottom-5 z-10">
           <DarkModeToggle />
         </div>
         <RouterProvider router={router} />;

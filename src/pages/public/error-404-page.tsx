@@ -1,4 +1,4 @@
-const Error404 = () => {
+const Error404Page = () => {
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-4">
       <div className="text-5xl">404</div>
@@ -7,4 +7,4 @@ const Error404 = () => {
   );
 };
 
-export default Error404;
+export default Error404Page;
