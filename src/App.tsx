@@ -14,6 +14,11 @@ import Error404Page from "./pages/public/error-404-page";
 import AuthPageLayout from "./pages/auth/auth-page-layout";
 import LoginPage from "./pages/auth/login-page";
 import SignupPage from "./pages/auth/signup-page";
+import CandidateLayout from "./pages/candidate/candidate-layout";
+import CandidateDashboard from "./pages/candidate/candidate-dashboard";
+import EmployerLayout from "./pages/employer/employer-layout";
+import EmployerDashboard from "./pages/employer/employer-dashboard";
+import OTPPage from "./pages/auth/otp-page";
 
 const router = createBrowserRouter([
   // Public Pages
@@ -43,6 +48,42 @@ const router = createBrowserRouter([
       {
         path: "/auth/signup",
         element: <SignupPage />,
+      },
+      {
+        path: "/auth/otp",
+        element: <OTPPage />,
+      },
+    ],
+  },
+
+  // Candidate Pages
+  {
+    path: "/candidate",
+    element: <CandidateLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/candidate/dashboard" replace />,
+      },
+      {
+        path: "/candidate/dashboard",
+        element: <CandidateDashboard />,
+      },
+    ],
+  },
+
+  // Employer Pages
+  {
+    path: "/employer",
+    element: <EmployerLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/employer/dashboard" replace />,
+      },
+      {
+        path: "/employer/dashboard",
+        element: <EmployerDashboard />,
       },
     ],
   },
@@ -88,7 +129,7 @@ const App = () => {
         <div className="fixed right-5 bottom-5 z-10">
           <DarkModeToggle />
         </div>
-        <RouterProvider router={router} />;
+        <RouterProvider router={router} />
       </main>
     </ThemeProvider>
   );

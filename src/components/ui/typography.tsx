@@ -22,19 +22,19 @@ const createComponent = <T extends HTMLElement>(
 
 const H1 = createComponent<HTMLHeadingElement>(
   "h1",
-  cn("text-4xl font-extrabold lg:text-5xl"),
+  cn("text-4xl font-extrabold md:text-5xl"),
   "H1"
 );
 
 const H2 = createComponent<HTMLHeadingElement>(
   "h2",
-  cn("text-3xl font-semibold lg:text-4xl"),
+  cn("text-3xl font-semibold md:text-4xl"),
   "H2"
 );
 
 const H3 = createComponent<HTMLHeadingElement>(
   "h3",
-  cn("text-2xl font-semibold lg:text-3xl"),
+  cn("text-2xl font-semibold md:text-3xl"),
   "H3"
 );
 

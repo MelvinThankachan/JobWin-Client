@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -41,8 +41,10 @@ const formSchema = z.object({
   role: z.enum(["candidate", "employer"]),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export default function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
@@ -51,7 +53,7 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormValues) {
     const data = {
       email: values.email,
       password: values.password,

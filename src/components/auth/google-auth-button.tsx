@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 const GoogleAuthButton = () => {
   return (
     <>
-      <Button variant="outline">
+      <Button
+        variant="outline"
+        className="active:scale-[98%] hover:bg-transparent transition-all duration-300 ease-in-out"
+      >
         <img
           src="/google-logo.svg"
           alt="Google Logo"
