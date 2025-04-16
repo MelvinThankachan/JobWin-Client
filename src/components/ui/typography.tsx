@@ -66,7 +66,7 @@ const Small = createComponent<HTMLParagraphElement>(
 
 const Muted = createComponent<HTMLSpanElement>(
   "span",
-  "text-sm text-muted-foreground",
+  "text-muted-foreground",
   "Muted"
 );
 

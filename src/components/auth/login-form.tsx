@@ -1,4 +1,3 @@
-"use client";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,9 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/lib/axiosInstance";
-import { setUser } from "@/lib/set-user";
+// import { setUser } from "@/lib/set-user";
 import { PasswordInput } from "@/components/ui/password-input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Loader2 } from "lucide-react";
+import useAuthStore from "@/stores/authStore";
+import { useNavigate } from "react-router-dom";
+import { use, useEffect } from "react";
 
 const formSchema = z.object({
   email: z
@@ -53,6 +56,15 @@ export default function LoginForm() {
     },
   });
 
+  const isLoading = form.formState.isSubmitting;
+
+  const navigate = useNavigate();
+
+  const user = useAuthStore((state) => state.user);
+  const tokens = useAuthStore((state) => state.tokens);
+  const setUser = useAuthStore((state) => state.setUser);
+  const setTokens = useAuthStore((state) => state.setTokens);
+
   async function onSubmit(values: FormValues) {
     const data = {
       email: values.email,
@@ -64,12 +76,12 @@ export default function LoginForm() {
       const response = await axiosInstance.post("/auth/login/", data);
       if (response.status === 200) {
         const { refresh, access, user } = response.data;
-        setUser(refresh, access, user);
-        if (user.role === "candidate") {
-          window.location.href = "/candidate/dashboard";
-        } else if (user.role === "employer") {
-          window.location.href = "/employer/dashboard";
-        }
+        setUser(user);
+        setTokens({ refresh, access });
+        toast.success("Login successful!", {
+          description: "Welcome back, " + user.email + "!",
+        });
+        navigate("/");
       }
     } catch (error: any) {
       if (error.response?.status === 400) {
@@ -95,7 +107,7 @@ export default function LoginForm() {
         }
       } else {
         toast.error("An unexpected error occurred. Please try again.", {
-          description: `${error.response.status}`,
+          description: error.message,
         });
       }
     }
@@ -173,7 +185,10 @@ export default function LoginForm() {
           )}
         />
 
-        <Button type="submit">Log In</Button>
+        <Button type="submit">
+          {isLoading && <Loader2 />}
+          Login
+        </Button>
       </form>
     </Form>
   );

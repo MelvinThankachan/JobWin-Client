@@ -3,7 +3,6 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import { H1 } from "./components/ui/typography";
 import WinAdminDashboard from "./components/winadmin/dashboard";
 import WinAdminCandidates from "./components/winadmin/candidates";
 import WinAdminEmployers from "./components/winadmin/employers";
@@ -19,17 +18,22 @@ import CandidateDashboard from "./pages/candidate/candidate-dashboard";
 import EmployerLayout from "./pages/employer/employer-layout";
 import EmployerDashboard from "./pages/employer/employer-dashboard";
 import OTPPage from "./pages/auth/otp-page";
+import PublicPageLayout from "./pages/public/public-page-layout";
+import LandingPage from "./pages/public/landing-page";
+import { Toaster } from "./components/ui/sonner";
 
 const router = createBrowserRouter([
   // Public Pages
   {
     path: "/",
-    element: (
-      <div className="flex flex-col items-center justify-center h-screen w-screen">
-        <H1>JobWin!</H1>
-      </div>
-    ),
+    element: <PublicPageLayout />,
     errorElement: <Error404Page />,
+    children: [
+      {
+        index: true,
+        element: <LandingPage />,
+      },
+    ],
   },
 
   // Auth Pages
@@ -125,12 +129,13 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <main>
+      <div>
         <div className="fixed right-5 bottom-5 z-10">
           <DarkModeToggle />
         </div>
+        <Toaster position="top-right" />
         <RouterProvider router={router} />
-      </main>
+      </div>
     </ThemeProvider>
   );
 };

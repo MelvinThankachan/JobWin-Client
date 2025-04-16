@@ -137,9 +137,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground selection:bg-primary selection:text-primary-foreground;
   }
+
   h1,
   h2,
   h3,
@@ -147,6 +149,18 @@
   h5,
   h6 {
     @apply font-clash-display;
+  }
+
+  .page-layout {
+    @apply w-dvw min-h-dvh flex flex-col items-center gap-10 px-5;
+  }
+
+  .hero-text {
+    @apply text-foreground text-5xl md:text-6xl lg:text-8xl font-semibold;
+  }
+
+  .section {
+    @apply container m-auto py-5;
   }
 }
 

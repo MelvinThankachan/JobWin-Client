@@ -2,5 +2,16 @@ export type UserType = {
   id: string;
   email: string;
   role: string;
-  is_active: boolean;
+  isActive: boolean;
+  isVerified: boolean;
+};
+
+export type TokenType = {
+  refresh: string;
+  access: string;
+};
+
+
+export type OTPType = {
+  expires_at: number;
 };

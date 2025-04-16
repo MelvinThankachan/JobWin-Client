@@ -5,7 +5,7 @@ const GoogleAuthButton = () => {
     <>
       <Button
         variant="outline"
-        className="active:scale-[98%] hover:bg-transparent transition-all duration-300 ease-in-out"
+        className="active:scale-[98%] hover:bg-primary/5"
       >
         <img
           src="/google-logo.svg"

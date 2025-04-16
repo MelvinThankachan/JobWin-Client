@@ -1,11 +1,13 @@
 import JobWinLogo from "@/components/job-win-logo";
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const AuthPageLayout = () => {
   return (
     <div className="flex flex-col items-center justify-center pt-10 p-5 gap-10 min-h-dvh">
-      <JobWinLogo />
+      <Link to="/">
+        <JobWinLogo />
+      </Link>
       {/* <Tabs defaultValue="candidate" className="w-full max-w-lg">
         <TabsList>
           <TabsTrigger value="candidate">Job Seeker</TabsTrigger>
