@@ -18,6 +18,7 @@ export function NavMain({
     url: string;
     icon: Icon;
     isActive?: boolean;
+    isDisabled?: boolean;
   }[];
 }) {
   return (
@@ -31,6 +32,7 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     size="lg"
+                    disabled={item.isDisabled}
                     className={cn(
                       "text-xl cursor-pointer",
                       isActive

@@ -12,14 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import axiosInstance from "@/lib/axiosInstance";
-// import { setUser } from "@/lib/set-user";
 import { PasswordInput } from "@/components/ui/password-input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
 import useAuthStore from "@/stores/authStore";
 import { useNavigate } from "react-router-dom";
-import { use, useEffect } from "react";
 
 const formSchema = z.object({
   email: z
@@ -41,7 +38,7 @@ const formSchema = z.object({
     .refine((password) => /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password), {
       message: "Password must contain at least one special character",
     }),
-  role: z.enum(["candidate", "employer"]),
+  role: z.enum(["candidate", "employer", "admin"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,11 +57,6 @@ export default function LoginForm() {
 
   const navigate = useNavigate();
 
-  const user = useAuthStore((state) => state.user);
-  const tokens = useAuthStore((state) => state.tokens);
-  const setUser = useAuthStore((state) => state.setUser);
-  const setTokens = useAuthStore((state) => state.setTokens);
-
   async function onSubmit(values: FormValues) {
     const data = {
       email: values.email,
@@ -73,18 +65,37 @@ export default function LoginForm() {
     };
 
     try {
-      const response = await axiosInstance.post("/auth/login/", data);
-      if (response.status === 200) {
-        const { refresh, access, user } = response.data;
-        setUser(user);
-        setTokens({ refresh, access });
+      const response = await useAuthStore.getState().login(data);
+      
+      if (response) {
+        const { user, verification_token } = response;
+        
+        if (verification_token) {
+          useAuthStore.getState().verificationToken = verification_token;
+        }
+        
         toast.success("Login successful!", {
           description: "Welcome back, " + user.email + "!",
         });
-        navigate("/");
+        
+        if (!user.is_verified) {
+          toast.info("Please verify your email before continuing.");
+          navigate("/auth/otp");
+          return;
+        }
+        
+        if (user.role === "candidate") {
+          navigate("/candidate/dashboard");
+        } else if (user.role === "employer") {
+          navigate("/employer/dashboard");
+        } else if (user.role === "admin") {
+          navigate("/winadmin/dashboard");
+        }
       }
     } catch (error: any) {
-      if (error.response?.status === 400) {
+      console.error('Login error:', error);
+      
+      if (error.response?.status === 400 && error.response?.data) {
         const backendErrors = error.response.data;
 
         if (backendErrors.email) {
@@ -106,8 +117,9 @@ export default function LoginForm() {
           });
         }
       } else {
-        toast.error("An unexpected error occurred. Please try again.", {
-          description: error.message,
+        const errorMessage = error.message || 'An unexpected error occurred';
+        toast.error("Failed to log in", {
+          description: errorMessage,
         });
       }
     }
@@ -167,6 +179,7 @@ export default function LoginForm() {
                   {[
                     ["Candidate", "candidate"],
                     ["Employer", "employer"],
+                    ["Admin", "admin"],
                   ].map((option, index) => (
                     <FormItem
                       className="flex items-center justify-center"

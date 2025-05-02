@@ -8,12 +8,6 @@ const OTPPage = () => {
       <H2 className="text-center">Please check your email for OTP.</H2>
 
       <OTPForm />
-
-      <div className="mt-4 text-foreground/50">
-        <span className="text-primary hover:underline">
-          <Link to="#">Resend OTP?</Link>
-        </span>
-      </div>
     </div>
   );
 };

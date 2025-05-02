@@ -1,7 +1,8 @@
 import {
-  createBrowserRouter,
   Navigate,
-  RouterProvider,
+  Routes,
+  Route,
+  BrowserRouter,
 } from "react-router-dom";
 import WinAdminDashboard from "./components/winadmin/dashboard";
 import WinAdminCandidates from "./components/winadmin/candidates";
@@ -21,110 +22,7 @@ import OTPPage from "./pages/auth/otp-page";
 import PublicPageLayout from "./pages/public/public-page-layout";
 import LandingPage from "./pages/public/landing-page";
 import { Toaster } from "./components/ui/sonner";
-
-const router = createBrowserRouter([
-  // Public Pages
-  {
-    path: "/",
-    element: <PublicPageLayout />,
-    errorElement: <Error404Page />,
-    children: [
-      {
-        index: true,
-        element: <LandingPage />,
-      },
-    ],
-  },
-
-  // Auth Pages
-  {
-    path: "/auth",
-    element: <AuthPageLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/auth/login" replace />,
-      },
-      {
-        path: "/auth/login",
-        element: <LoginPage />,
-      },
-      {
-        path: "/auth/signup",
-        element: <SignupPage />,
-      },
-      {
-        path: "/auth/otp",
-        element: <OTPPage />,
-      },
-    ],
-  },
-
-  // Candidate Pages
-  {
-    path: "/candidate",
-    element: <CandidateLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/candidate/dashboard" replace />,
-      },
-      {
-        path: "/candidate/dashboard",
-        element: <CandidateDashboard />,
-      },
-    ],
-  },
-
-  // Employer Pages
-  {
-    path: "/employer",
-    element: <EmployerLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/employer/dashboard" replace />,
-      },
-      {
-        path: "/employer/dashboard",
-        element: <EmployerDashboard />,
-      },
-    ],
-  },
-
-  // {
-  //   path: "/find-jobs",
-  //   element: <FindJobsPage />,
-  // },
-  // {
-  //   path: "/find-companies",
-  //   element: <FindCompaniesPage />,
-  // },
-
-  // WinAdmin Pages
-  {
-    path: "/winadmin",
-    element: <WinAdminLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/winadmin/dashboard" replace />,
-      },
-      {
-        path: "/winadmin/dashboard",
-        element: <WinAdminDashboard />,
-      },
-      {
-        path: "/winadmin/candidates",
-        element: <WinAdminCandidates />,
-      },
-      {
-        path: "/winadmin/employers",
-        element: <WinAdminEmployers />,
-      },
-    ],
-  },
-]);
+import AuthGuard from "./components/auth/auth-guard";
 
 const App = () => {
   return (
@@ -134,7 +32,69 @@ const App = () => {
           <DarkModeToggle />
         </div>
         <Toaster position="top-right" />
-        <RouterProvider router={router} />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Pages */}
+            <Route path="/" element={<PublicPageLayout />}>
+              <Route index element={
+                <AuthGuard requireAuth={false}>
+                  <LandingPage />
+                </AuthGuard>
+              } />
+            </Route>
+
+            {/* Auth Pages - Only accessible to non-authenticated users */}
+            <Route path="/auth" element={<AuthPageLayout />}>
+              <Route index element={<Navigate to="/auth/login" replace />} />
+              <Route path="login" element={
+                <AuthGuard requireAuth={false}>
+                  <LoginPage />
+                </AuthGuard>
+              } />
+              <Route path="signup" element={
+                <AuthGuard requireAuth={false}>
+                  <SignupPage />
+                </AuthGuard>
+              } />
+              <Route path="otp" element={<OTPPage />} />
+            </Route>
+
+            {/* Candidate Pages - Protected routes requiring authentication */}
+            <Route path="/candidate" element={
+              <AuthGuard requireAuth={true} allowedRoles={["candidate"]}>
+                <CandidateLayout />
+              </AuthGuard>
+            }>
+              <Route index element={<Navigate to="/candidate/dashboard" replace />} />
+              <Route path="dashboard" element={<CandidateDashboard />} />
+            </Route>
+
+            {/* Employer Pages - Protected routes requiring authentication */}
+            <Route path="/employer" element={
+              <AuthGuard requireAuth={true} allowedRoles={["employer"]}>
+                <EmployerLayout />
+              </AuthGuard>
+            }>
+              <Route index element={<Navigate to="/employer/dashboard" replace />} />
+              <Route path="dashboard" element={<EmployerDashboard />} />
+            </Route>
+
+            {/* WinAdmin Pages - Protected routes requiring authentication */}
+            <Route path="/winadmin" element={
+              <AuthGuard requireAuth={true} allowedRoles={["admin"]}>
+                <WinAdminLayout />
+              </AuthGuard>
+            }>
+              <Route index element={<Navigate to="/winadmin/dashboard" replace />} />
+              <Route path="dashboard" element={<WinAdminDashboard />} />
+              <Route path="candidates" element={<WinAdminCandidates />} />
+              <Route path="employers" element={<WinAdminEmployers />} />
+            </Route>
+
+            {/* 404 Page */}
+            <Route path="*" element={<Error404Page />} />
+          </Routes>
+        </BrowserRouter>
       </div>
     </ThemeProvider>
   );

@@ -44,11 +44,12 @@ const data = {
       url: "/winadmin/employers",
       icon: IconUsersGroup,
     },
-    {
-      title: "Job Postings",
-      url: "/winadmin/job-postings",
-      icon: IconFileDescription,
-    },
+    // {
+    //   title: "Job Postings",
+    //   url: "/winadmin/job-postings",
+    //   icon: IconFileDescription,
+    //   isDisabled: true,
+    // },
   ],
   navSecondary: [
     {

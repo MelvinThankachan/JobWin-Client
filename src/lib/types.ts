@@ -1,7 +1,7 @@
 export type UserType = {
   id: string;
   email: string;
-  role: string;
+  role: "candidate" | "employer" | "admin";
   isActive: boolean;
   isVerified: boolean;
 };
@@ -11,7 +11,7 @@ export type TokenType = {
   access: string;
 };
 
-
 export type OTPType = {
+  // created_at: number;
   expires_at: number;
 };

@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import axiosInstance from "@/lib/axiosInstance";
-import { setUser } from "@/lib/set-user";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Loader2 } from "lucide-react";
+import useAuthStore from "@/stores/authStore";
 
 const formSchema = z
   .object({
@@ -63,6 +63,8 @@ export default function SignupForm() {
     },
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const data = {
       email: values.email,
@@ -71,18 +73,21 @@ export default function SignupForm() {
     };
 
     try {
-      const response = await axiosInstance.post("/auth/signup/", data);
-      if (response.status === 201) {
-        const { refresh, access, user } = response.data;
-        setUser(refresh, access, user);
-        if (user.role === "candidate") {
-          window.location.href = "/candidate/dashboard";
-        } else if (user.role === "employer") {
-          window.location.href = "/employer/dashboard";
-        }
+      // Use the signup method from auth store instead of direct axios call
+      const response = await useAuthStore.getState().signup(data);
+      
+      if (response) {
+        // Success message
+        toast.success("Account created! Please verify your email with the OTP sent.");
+        
+        // Use window.location for a hard redirect to avoid React Router issues
+        window.location.href = "/auth/otp";
+        return;
       }
     } catch (error: any) {
-      if (error.response?.status === 400) {
+      console.error('Signup error:', error);
+      
+      if (error.response?.status === 400 && error.response?.data) {
         const backendErrors = error.response.data;
 
         if (backendErrors.email) {
@@ -104,8 +109,10 @@ export default function SignupForm() {
           });
         }
       } else {
-        toast.error("An unexpected error occurred. Please try again.", {
-          description: `${error.response.status}`,
+        // Handle network errors or other types of errors
+        const errorMessage = error.message || 'An unexpected error occurred';
+        toast.error("Failed to sign up", {
+          description: errorMessage,
         });
       }
     }
@@ -201,7 +208,10 @@ export default function SignupForm() {
           )}
         />
 
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center">
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isLoading ? "Creating Account..." : "Sign Up"}
+        </Button>
       </form>
     </Form>
   );
