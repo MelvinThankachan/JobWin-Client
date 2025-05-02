@@ -8,8 +8,7 @@ export default function WinAdminLayout() {
   const user = useAuthStore((state) => state.user);
   const location = useLocation();
 
-  if (!user || user.role !== "winadmin") {
-    // Redirect to login and save current location in state
+  if (!user || user.role !== "admin") {
     return (
       <Navigate
         to="/auth/login"
@@ -20,10 +19,6 @@ export default function WinAdminLayout() {
         replace
       />
     );
-  }
-  if (!user.isVerified) {
-    // Redirect to verification page
-    return <Navigate to="/auth/otp" replace />;
   }
 
   return (

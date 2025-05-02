@@ -38,7 +38,7 @@ const formSchema = z.object({
     .refine((password) => /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password), {
       message: "Password must contain at least one special character",
     }),
-  role: z.enum(["candidate", "employer", "admin"]),
+  role: z.enum(["candidate", "employer"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -88,8 +88,6 @@ export default function LoginForm() {
           navigate("/candidate/dashboard");
         } else if (user.role === "employer") {
           navigate("/employer/dashboard");
-        } else if (user.role === "admin") {
-          navigate("/winadmin/dashboard");
         }
       }
     } catch (error: any) {
@@ -179,7 +177,6 @@ export default function LoginForm() {
                   {[
                     ["Candidate", "candidate"],
                     ["Employer", "employer"],
-                    ["Admin", "admin"],
                   ].map((option, index) => (
                     <FormItem
                       className="flex items-center justify-center"

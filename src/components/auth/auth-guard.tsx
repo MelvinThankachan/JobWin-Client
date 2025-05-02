@@ -40,7 +40,12 @@ const AuthGuard = ({ children, requireAuth, allowedRoles }: AuthGuardProps) => {
   
   // CASE 1: Route requires authentication but user is not authenticated
   if (requireAuth && !isAuthenticated) {
-    // Redirect to login page and save the location they were trying to access
+    // Check if the user is trying to access admin routes
+    if (location.pathname.startsWith('/winadmin')) {
+      // Redirect to admin login page
+      return <Navigate to="/winadmin/login" state={{ from: location }} replace />;
+    }
+    // Redirect to regular login page for non-admin routes
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
   

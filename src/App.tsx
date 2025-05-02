@@ -23,6 +23,7 @@ import PublicPageLayout from "./pages/public/public-page-layout";
 import LandingPage from "./pages/public/landing-page";
 import { Toaster } from "./components/ui/sonner";
 import AuthGuard from "./components/auth/auth-guard";
+import AdminLoginPage from "./pages/admin/admin-login";
 
 const App = () => {
   return (
@@ -78,6 +79,13 @@ const App = () => {
               <Route index element={<Navigate to="/employer/dashboard" replace />} />
               <Route path="dashboard" element={<EmployerDashboard />} />
             </Route>
+
+            {/* Admin Login Page - Separate from regular login */}
+            <Route path="/winadmin/login" element={
+              <AuthGuard requireAuth={false}>
+                <AdminLoginPage />
+              </AuthGuard>
+            } />
 
             {/* WinAdmin Pages - Protected routes requiring authentication */}
             <Route path="/winadmin" element={
