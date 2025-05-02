@@ -24,6 +24,7 @@ import LandingPage from "./pages/public/landing-page";
 import { Toaster } from "./components/ui/sonner";
 import AuthGuard from "./components/auth/auth-guard";
 import AdminLoginPage from "./pages/admin/admin-login";
+import UserDetailPage from "./pages/admin/user-detail";
 
 const App = () => {
   return (
@@ -97,6 +98,7 @@ const App = () => {
               <Route path="dashboard" element={<WinAdminDashboard />} />
               <Route path="candidates" element={<WinAdminCandidates />} />
               <Route path="employers" element={<WinAdminEmployers />} />
+              <Route path="user/:userId" element={<UserDetailPage />} />
             </Route>
 
             {/* 404 Page */}
