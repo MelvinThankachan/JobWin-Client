@@ -25,8 +25,6 @@ const LoginPage = () => {
     <div className="flex flex-col gap-10">
       <H2 className="text-center">Welcome Back, Dude</H2>
 
-      <GoogleAuthButton />
-
       <LoginForm />
 
       <div className="mt-4 text-foreground/50">

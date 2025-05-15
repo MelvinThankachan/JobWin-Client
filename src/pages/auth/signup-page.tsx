@@ -8,8 +8,6 @@ const SignupPage = () => {
     <div className="flex flex-col gap-10">
       <H2 className="text-center">Get more opportunities</H2>
 
-      <GoogleAuthButton />
-
       <SignupForm />
 
       <div className="mt-4 text-foreground/50">

@@ -1,6 +1,7 @@
 import axios from "axios";
 import useAuthStore from "@/stores/authStore";
 
+// Create a base axios instance
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000/api",
   headers: {
@@ -9,67 +10,32 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
+// Add request interceptor to include the access token in all requests
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Get the latest access token directly from the Zustand store
     const accessToken = useAuthStore.getState().tokens?.access;
+    
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
   (error) => {
-    console.error("Request error:", error);
     return Promise.reject(error);
   }
 );
 
+// TEMPORARY: Removed token refresh function to simplify authentication
+
+// Simple response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  async function (error) {
-    const originalRequest = error.config;
-
-    if (originalRequest._retry) {
-      return Promise.reject(error);
-    }
-
-    if (error.response?.status === 401) {
-      const refreshToken = useAuthStore.getState().tokens?.refresh;
-
-      if (refreshToken) {
-        originalRequest._retry = true;
-
-        try {
-          const response = await axios.post(
-            `${axiosInstance.defaults.baseURL}/auth/token-refresh/`,
-            { refresh: refreshToken },
-            {
-              headers: { "Content-Type": "application/json" },
-              _retry: true,
-            } as any
-          );
-
-          if (response.status === 200) {
-            const { refresh, access } = response.data;
-
-            useAuthStore.getState().setTokens({ refresh, access });
-
-            originalRequest.headers.Authorization = `Bearer ${access}`;
-            originalRequest.headers.Authorization = `Bearer ${access}`;
-            return axios(originalRequest);
-          }
-        } catch (refreshError) {
-          useAuthStore.getState().removeUser();
-          window.location.href = "/auth/login";
-          return Promise.reject(refreshError);
-        }
-      } else {
-        useAuthStore.getState().removeUser();
-        window.location.href = "/auth/login";
-      }
-    }
-
+  (error) => {
+    // Basic error logging
+    console.error('API Error:', error.message);
     return Promise.reject(error);
   }
 );

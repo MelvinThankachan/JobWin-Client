@@ -1,8 +1,8 @@
-import { persist } from 'zustand/middleware';
+import { persist } from "zustand/middleware";
 
 const persistMiddleware = persist({
-  name: 'user-store', // The name of the store
-  getStorage: () => localStorage, // Use localStorage as the storage
+  name: "user-store",
+  getStorage: () => localStorage,
 });
 
 export default persistMiddleware;

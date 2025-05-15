@@ -27,10 +27,10 @@ const WinAdminEmployers = () => {
   }, []);
 
   const handleUserStatusToggle = (userId: number) => {
-    setEmployers(prev => 
-      prev.map(employer => 
-        employer.id === userId 
-          ? { ...employer, is_active: !employer.is_active } 
+    setEmployers((prev) =>
+      prev.map((employer) =>
+        employer.id === userId
+          ? { ...employer, is_active: !employer.is_active }
           : employer
       )
     );
@@ -40,7 +40,7 @@ const WinAdminEmployers = () => {
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
         <div className="text-5xl">Employers List</div>
-        
+
         {loading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -48,9 +48,9 @@ const WinAdminEmployers = () => {
         ) : error ? (
           <div className="text-destructive text-center p-4">{error}</div>
         ) : (
-          <EmployerTable 
-            data={employers} 
-            onStatusToggle={handleUserStatusToggle} 
+          <EmployerTable
+            data={employers}
+            onStatusToggle={handleUserStatusToggle}
           />
         )}
       </div>

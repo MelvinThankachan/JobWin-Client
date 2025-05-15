@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axiosInstance";
 
-// Types
+
 export interface Candidate {
   id: number;
   email: string;
@@ -22,7 +22,7 @@ export interface UserCounts {
   employerCount: number;
 }
 
-// API functions
+
 export const fetchCandidates = async (): Promise<Candidate[]> => {
   const response = await axiosInstance.get("/winadmin/candidates/");
   return response.data;

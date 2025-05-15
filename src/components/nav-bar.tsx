@@ -22,12 +22,35 @@ const NavBar = () => {
           <JobWinLogo />
         </Link>
         <div>
-          <Button size="lg" variant="link">
-            Find Jobs
-          </Button>
-          <Button size="lg" variant="link">
-            Find Companies
-          </Button>
+          {user && user.role === "employer" ? (
+            // Navigation links for employers
+            <>
+              <Link to="/employer/dashboard">
+                <Button size="lg" variant="link">
+                  Dashboard
+                </Button>
+              </Link>
+              <Link to="/employer/profile">
+                <Button size="lg" variant="link">
+                  Company Profile
+                </Button>
+              </Link>
+            </>
+          ) : (
+            // Navigation links for candidates and public
+            <>
+              <Link to="/jobs">
+                <Button size="lg" variant="link">
+                  Find Jobs
+                </Button>
+              </Link>
+              <Link to="/companies">
+                <Button size="lg" variant="link">
+                  Find Companies
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
       <div className="flex gap-5 items-center">

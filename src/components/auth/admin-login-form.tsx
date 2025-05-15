@@ -47,7 +47,7 @@ export default function AdminLoginForm() {
     };
 
     try {
-      // Use the dedicated admin login endpoint
+
       const response = await axios.post(
         "http://localhost:8000/api/auth/admin-login/",
         data,
@@ -57,7 +57,7 @@ export default function AdminLoginForm() {
       if (response.data) {
         const { user, refresh, access } = response.data;
 
-        // Store user and tokens in the auth store
+
         useAuthStore.getState().setUser(user);
         useAuthStore.getState().setTokens({ refresh, access });
 
@@ -65,7 +65,7 @@ export default function AdminLoginForm() {
           description: "Welcome back, Admin!",
         });
 
-        // No need to check role as the endpoint already validates admin role
+
         navigate("/winadmin/dashboard");
       }
     } catch (error: any) {

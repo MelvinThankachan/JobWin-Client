@@ -83,10 +83,13 @@ const useAuthStore = create<AuthStoreType>()(
       verificationToken: null,
 
       setUser: (user) => set({ user }),
-      setTokens: (tokens) => set({ tokens }),
+      setTokens: (tokens) => {
+        set({ tokens });
+      },
       setOTP: (otp) => set({ otp }),
-      removeUser: () =>
-        set({ user: null, tokens: null, otp: null, verificationToken: null }),
+      removeUser: () => {
+        set({ user: null, tokens: null, otp: null, verificationToken: null });
+      },
 
       signup: async (data) => {
         set({ isLoading: true, error: null });
@@ -111,16 +114,30 @@ const useAuthStore = create<AuthStoreType>()(
       login: async (data) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axiosInstance.post("/auth/login/", data);
+          // Use direct axios call to avoid interceptors during login
+          const response = await axios.post(
+            `${axiosInstance.defaults.baseURL}/auth/login/`, 
+            data,
+            { headers: { "Content-Type": "application/json" } }
+          );
+          
+          if (!response.data.access || !response.data.refresh) {
+            throw new Error("Invalid token data received from server");
+          }
+          
+          const tokens = {
+            access: response.data.access,
+            refresh: response.data.refresh,
+          };
+          
+          // Update the store state
           set({
             user: response.data.user,
-            tokens: {
-              access: response.data.access,
-              refresh: response.data.refresh,
-            },
+            tokens,
             verificationToken: response.data.verification_token || null,
             isLoading: false,
           });
+          
           return response.data;
         } catch (error) {
           set({ error: getErrorMessage(error), isLoading: false });
@@ -129,27 +146,27 @@ const useAuthStore = create<AuthStoreType>()(
       },
 
       verifyOTP: async (email, otp, verificationToken) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await axiosInstance.post("/auth/verify-otp/", {
-            email,
-            otp,
-            verification_token: verificationToken,
-          });
-          set({
-            user: response.data.user || get().user,
-            tokens: {
-              access: response.data.access,
-              refresh: response.data.refresh,
-            },
-            verificationToken: null,
-            isLoading: false,
-          });
-          return response.data;
-        } catch (error) {
-          set({ error: getErrorMessage(error), isLoading: false });
-          throw error;
-        }
+        // set({ isLoading: true, error: null });
+        // try {
+        //   const response = await axiosInstance.post("/auth/verify-otp/", {
+        //     email,
+        //     otp,
+        //     verification_token: verificationToken,
+        //   });
+        //   set({
+        //     user: response.data.user || get().user,
+        //     tokens: {
+        //       access: response.data.access,
+        //       refresh: response.data.refresh,
+        //     },
+        //     verificationToken: null,
+        //     isLoading: false,
+        //   });
+        //   return response.data;
+        // } catch (error) {
+        //   set({ error: getErrorMessage(error), isLoading: false });
+        //   throw error;
+        // }
       },
 
       verifyOTPWithoutAuth: async (email, otp, verificationToken) => {
@@ -181,21 +198,21 @@ const useAuthStore = create<AuthStoreType>()(
       },
 
       resendOTP: async (email) => {
-        set({ isLoading: true, error: null });
-        try {
-          const response = await axiosInstance.post("/auth/resend-otp/", {
-            email,
-          });
-          set({
-            verificationToken: response.data.verification_token,
-            otp: { expires_at: response.data.expires_at },
-            isLoading: false,
-          });
-          return response.data;
-        } catch (error) {
-          set({ error: getErrorMessage(error), isLoading: false });
-          throw error;
-        }
+        // set({ isLoading: true, error: null });
+        // try {
+        //   const response = await axiosInstance.post("/auth/resend-otp/", {
+        //     email,
+        //   });
+        //   set({
+        //     verificationToken: response.data.verification_token,
+        //     otp: { expires_at: response.data.expires_at },
+        //     isLoading: false,
+        //   });
+        //   return response.data;
+        // } catch (error) {
+        //   set({ error: getErrorMessage(error), isLoading: false });
+        //   throw error;
+        // }
       },
 
       resendOTPWithoutAuth: async (email) => {

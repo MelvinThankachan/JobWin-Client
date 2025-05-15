@@ -27,10 +27,10 @@ const WinAdminCandidates = () => {
   }, []);
 
   const handleUserStatusToggle = (userId: number) => {
-    setCandidates(prev => 
-      prev.map(candidate => 
-        candidate.id === userId 
-          ? { ...candidate, is_active: !candidate.is_active } 
+    setCandidates((prev) =>
+      prev.map((candidate) =>
+        candidate.id === userId
+          ? { ...candidate, is_active: !candidate.is_active }
           : candidate
       )
     );
@@ -40,7 +40,7 @@ const WinAdminCandidates = () => {
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
         <div className="text-5xl">Candidates List</div>
-        
+
         {loading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -48,9 +48,9 @@ const WinAdminCandidates = () => {
         ) : error ? (
           <div className="text-destructive text-center p-4">{error}</div>
         ) : (
-          <CandidateTable 
-            data={candidates} 
-            onStatusToggle={handleUserStatusToggle} 
+          <CandidateTable
+            data={candidates}
+            onStatusToggle={handleUserStatusToggle}
           />
         )}
       </div>

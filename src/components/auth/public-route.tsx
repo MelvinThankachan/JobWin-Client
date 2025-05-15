@@ -14,7 +14,6 @@ const PublicRoute = () => {
 
   useEffect(() => {
     const validateAuth = async () => {
-      // If no tokens or user, not authenticated
       if (!tokens || !user) {
         setIsAuthenticated(false);
         setIsValidating(false);
@@ -22,11 +21,9 @@ const PublicRoute = () => {
       }
 
       try {
-        // Validate token by making a request to a protected endpoint
         await axiosInstance.get("/auth/validate-token/");
         setIsAuthenticated(true);
       } catch (error) {
-        // If validation fails, token might be invalid despite refresh attempts
         setIsAuthenticated(false);
       } finally {
         setIsValidating(false);
@@ -36,14 +33,11 @@ const PublicRoute = () => {
     validateAuth();
   }, [tokens, user]);
 
-  // Show loading or spinner while validating
   if (isValidating) {
-    return <div>Loading...</div>; // You can replace with a proper loading component
+    return <div>Loading...</div>;
   }
 
-  // If user is authenticated, redirect to last page or home
   if (isAuthenticated) {
-    // Check if location.state?.from exists, else fallback to "/"
     const from = location.state?.from?.pathname || "/";
     return <Navigate to={from} replace />;
   }

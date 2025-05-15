@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2 } from "lucide-react";
 import useAuthStore from "@/stores/authStore";
 import { useNavigate } from "react-router-dom";
+import GoogleAuthButton from "./google-auth-button";
 
 const formSchema = z.object({
   email: z
@@ -66,24 +67,24 @@ export default function LoginForm() {
 
     try {
       const response = await useAuthStore.getState().login(data);
-      
+
       if (response) {
         const { user, verification_token } = response;
-        
+
         if (verification_token) {
           useAuthStore.getState().verificationToken = verification_token;
         }
-        
+
         toast.success("Login successful!", {
           description: "Welcome back, " + user.email + "!",
         });
-        
+
         if (!user.is_verified) {
           toast.info("Please verify your email before continuing.");
           navigate("/auth/otp");
           return;
         }
-        
+
         if (user.role === "candidate") {
           navigate("/candidate/dashboard");
         } else if (user.role === "employer") {
@@ -91,8 +92,8 @@ export default function LoginForm() {
         }
       }
     } catch (error: any) {
-      console.error('Login error:', error);
-      
+      console.error("Login error:", error);
+
       if (error.response?.status === 400 && error.response?.data) {
         const backendErrors = error.response.data;
 
@@ -115,7 +116,7 @@ export default function LoginForm() {
           });
         }
       } else {
-        const errorMessage = error.message || 'An unexpected error occurred';
+        const errorMessage = error.message || "An unexpected error occurred";
         toast.error("Failed to log in", {
           description: errorMessage,
         });
@@ -124,82 +125,88 @@ export default function LoginForm() {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        noValidate
-        className="w-full flex flex-col gap-10"
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter your email."
-                  type="email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      {form.watch("role") === "candidate" && <GoogleAuthButton />}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          noValidate
+          className="w-full flex flex-col gap-10"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your email."
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder="Enter your password." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <PasswordInput
+                    placeholder="Enter your password."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Login as</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue="candidate"
-                  className="flex"
-                >
-                  {[
-                    ["Candidate", "candidate"],
-                    ["Employer", "employer"],
-                  ].map((option, index) => (
-                    <FormItem
-                      className="flex items-center justify-center"
-                      key={index}
-                    >
-                      <FormControl>
-                        <RadioGroupItem value={option[1]} />
-                      </FormControl>
-                      <FormLabel className="font-base">{option[0]}</FormLabel>
-                    </FormItem>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>Login as</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue="candidate"
+                    className="flex"
+                  >
+                    {[
+                      ["Candidate", "candidate"],
+                      ["Employer", "employer"],
+                    ].map((option, index) => (
+                      <FormItem
+                        className="flex items-center justify-center"
+                        key={index}
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={option[1]} />
+                        </FormControl>
+                        <FormLabel className="font-base">{option[0]}</FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit">
-          {isLoading && <Loader2 />}
-          Login
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit">
+            {isLoading && <Loader2 />}
+            Login
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 }
